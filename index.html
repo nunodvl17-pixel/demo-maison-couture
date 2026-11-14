@@ -111,6 +111,24 @@
   .hero-copy .kicker { font-size: clamp(17px, 2vw, 21px); color: var(--grey-light); margin: 0 0 14px; font-weight: 500; }
   .hero h1 { font-size: clamp(46px, 8.6vw, 116px); letter-spacing: -0.045em; }
   .hero-copy .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero-copy { pointer-events: none; }
+  .hero-copy .actions { pointer-events: auto; }
+  #tape3d { cursor: grab; touch-action: pan-y; }
+  #tape3d.grabbing { cursor: grabbing; }
+  .drag-hint {
+    position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); z-index: 3;
+    display: inline-flex; align-items: center; gap: 10px; pointer-events: none;
+    font-size: 14px; color: rgba(255,255,255,.75); background: rgba(255,255,255,.08);
+    padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14);
+    transition: opacity .5s ease; white-space: nowrap;
+  }
+  @media (max-width: 760px) { .drag-hint { bottom: 13%; font-size: 13px; } }
+  .drag-hint svg { width: 18px; height: 18px; }
+  .drag-hint.gone { opacity: 0; }
+  @media (prefers-reduced-motion: no-preference) {
+    .drag-hint svg { animation: nudge 2.4s ease-in-out infinite; }
+    @keyframes nudge { 0%, 100% { transform: translateX(-4px); } 50% { transform: translateX(4px); } }
+  }
   .hero-stats {
     position: absolute; left: 0; right: 0; top: 22%; text-align: center; z-index: 2; padding: 0 20px;
     opacity: 0; visibility: hidden;
@@ -184,6 +202,16 @@
   .card.dark .foot { color: var(--grey-light); }
   .track-note { width: min(1180px, 100% - 40px); margin: 28px auto 0; font-size: 15px; color: var(--grey); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 
+
+  .services-all { background: var(--mist); padding: 0 0 120px; }
+  .all-services { margin-top: 0; }
+  .all-services h3 { font-size: clamp(28px, 3.4vw, 40px); margin-bottom: 28px; }
+  .all-services ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 32px; }
+  .all-services li { padding: 16px 0; border-top: 1px solid rgba(16,19,28,.1); font-size: 17px; display: flex; gap: 12px; align-items: baseline; }
+  .all-services li::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--tape); flex: none; transform: translateY(-4px); }
+  @media (max-width: 900px) { .all-services ul { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .all-services ul { grid-template-columns: 1fr; } }
+
   /* ---------- Chiffres ---------- */
   .numbers { padding: 140px 0; }
   .numbers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
@@ -215,6 +243,28 @@
   .rev-foot { margin-top: 40px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--grey); }
   .stars { display: inline-flex; gap: 3px; }
   .stars svg { width: 20px; height: 20px; }
+
+
+  .rev-summary { display: grid; grid-template-columns: auto 1fr; gap: 56px; align-items: center; margin-bottom: 56px; padding: 40px; background: var(--mist); border-radius: var(--radius); }
+  .rev-score .big { font-size: 88px; font-weight: 600; letter-spacing: -0.05em; line-height: 1; }
+  .rev-score .big small { font-size: .4em; color: var(--grey); letter-spacing: -0.02em; }
+  .rev-score p { margin: 8px 0 0; color: var(--grey); }
+  .rev-bars { display: grid; gap: 10px; max-width: 520px; }
+  .rev-bars div { display: grid; grid-template-columns: 80px 1fr 28px; gap: 14px; align-items: center; font-size: 15px; color: var(--grey); }
+  .rev-bars i { height: 8px; border-radius: 4px; background: rgba(16,19,28,.08); overflow: hidden; }
+  .rev-bars i::before { content: ""; display: block; height: 100%; width: var(--w); background: var(--tape); border-radius: 4px; }
+  .rev-bars b { color: var(--ink); text-align: right; }
+  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .quote { margin: 0; padding: 32px 30px; border-radius: var(--radius); border: 1px solid rgba(16,19,28,.08); display: flex; flex-direction: column; gap: 14px; }
+  .quote blockquote { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; flex: 1; }
+  .quote figcaption { font-size: 14px; color: var(--grey); }
+  .quote-note { background: var(--night); color: #fff; border: 0; }
+  .quote-note blockquote { font-weight: 500; font-size: 19px; }
+  .quote-note .link-more { color: var(--tape); }
+  @media (max-width: 900px) {
+    .rev-summary { grid-template-columns: 1fr; gap: 28px; padding: 28px; }
+    .quotes { grid-template-columns: 1fr; }
+  }
 
   /* ---------- Infos ---------- */
   .infos { background: var(--mist); padding: 140px 0; }
@@ -288,6 +338,7 @@
   <section class="hero" id="hero">
     <canvas id="tape3d" aria-hidden="true"></canvas>
     <div class="css-tape" aria-hidden="true"></div>
+    <div class="drag-hint" id="dragHint" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-1.5a1.5 1.5 0 0 1 3 0V11m0-1a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.8 14a1.5 1.5 0 0 1 2.5-1.6L9 15"/></svg>Faites tourner le mètre</div>
     <div class="hero-copy" id="heroCopy">
       <p class="kicker">Retouches et couture à Levallois-Perret</p>
       <h1>La retouche,<br>au millimètre près.</h1>
@@ -371,6 +422,10 @@
     </div>
   </section>
 
+  <section class="services-all">
+    <div class="all-services wrap"><h3>Tout ce que fait l'atelier</h3><ul><li>Retouches rapides</li><li>Ourlets</li><li>Reprises de couture</li><li>Réparation de fermetures</li><li>Pose de boutons et de crochets</li><li>Réalisation de points de couture</li><li>Remaillage de tricots</li><li>Ajout de doublures</li><li>Installation d'accessoires</li><li>Personnalisation de vêtements</li><li>Transformation de vêtements</li><li>Fabrication de vêtements</li><li>Retouches sur cuir</li><li>Retouches sur fourrure</li><li>Retouches de robes de mariée</li><li>Et d'autres services sur demande</li></ul></div>
+  </section>
+
   <!-- Chiffres -->
   <section class="numbers" aria-label="La boutique en chiffres">
     <div class="wrap numbers-grid">
@@ -400,17 +455,27 @@
   <section class="reviews" id="avis">
     <div class="wrap">
       <h2>Pourquoi on revient chez Daniel.</h2>
-      <div class="rev-grid">
-        <div class="rev"><p class="q">Un pilier du quartier.</p><p>Installé ici depuis près de trente ans, Daniel est salué par tout le monde en passant. Beaucoup de clients viennent depuis aussi longtemps.</p></div>
-        <div class="rev"><p class="q">Du sur-mesure, même sans patron.</p><p>Une cliente lui a confié un tissu rapporté de voyage : il en a fait une robe, simplement en s'inspirant d'un modèle qu'elle avait apporté.</p></div>
-        <div class="rev"><p class="q">Un travail pro, des prix justes.</p><p>Les avis parlent d'un accueil chaleureux, de prix raisonnables et de fermetures « comme neuves ».</p></div>
+      <div class="rev-summary">
+        <div class="rev-score">
+          <div class="big">4,7<small>/5</small></div>
+          <span class="stars" aria-hidden="true"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span>
+          <p>38 avis Google</p>
+        </div>
+        <div class="rev-bars" aria-label="Répartition des 38 avis">
+          <div><span>5 étoiles</span><i style="--w:89.5%"></i><b>34</b></div>
+          <div><span>4 étoiles</span><i style="--w:2.6%"></i><b>1</b></div>
+          <div><span>3 étoiles</span><i style="--w:0%"></i><b>0</b></div>
+          <div><span>2 étoiles</span><i style="--w:0%"></i><b>0</b></div>
+          <div><span>1 étoile</span><i style="--w:7.9%"></i><b>3</b></div>
+        </div>
       </div>
-      <div class="rev-foot">
-        <span class="stars" aria-hidden="true">
-          <svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg>
-        </span>
-        <span>4,7 sur 5, sur 38 avis Google.</span>
-        <a class="link-more" href="https://www.google.com/maps/place/Maison+de+la+Couture/@48.8871828,2.2840608,17z" target="_blank" rel="noopener">Lire les avis<span class="sr-only"> (nouvel onglet)</span></a>
+      <div class="quotes">
+        <figure class="quote"><blockquote>« Un magicien de la couture. »</blockquote><span class="stars" aria-label="5 étoiles"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span><figcaption>Avis Google, il y a 4 mois</figcaption></figure>
+        <figure class="quote"><blockquote>« Travail de professionnel et prix très raisonnable ! »</blockquote><span class="stars" aria-label="5 étoiles"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span><figcaption>Avis Google, il y a 5 mois</figcaption></figure>
+        <figure class="quote"><blockquote>« Daniel a beaucoup de goût et de créativité. »</blockquote><span class="stars" aria-label="5 étoiles"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span><figcaption>Avis Google, il y a 3 mois</figcaption></figure>
+        <figure class="quote"><blockquote>« Monsieur est vraiment très gentil et travaille très bien. »</blockquote><span class="stars" aria-label="5 étoiles"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span><figcaption>Avis Google, il y a 3 semaines</figcaption></figure>
+        <figure class="quote"><blockquote>« Vous serez reçu avec sympathie et grand professionnalisme. »</blockquote><span class="stars" aria-label="5 étoiles"><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg><svg viewBox="0 0 20 20"><path fill="#F4C430" d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L10 14.8l-5.2 2.8 1-5.8L1.5 7.7l5.9-.8z"/></svg></span><figcaption>Avis Google, il y a un an</figcaption></figure>
+        <figure class="quote quote-note"><blockquote>Installé dans le quartier depuis près de trente ans, Daniel répond lui-même à ses avis.</blockquote><figcaption><a class="link-more" href="https://www.google.com/maps/place/Maison+de+la+Couture/@48.8871828,2.2840608,17z" target="_blank" rel="noopener">Lire les 38 avis<span class="sr-only"> (nouvel onglet)</span></a></figcaption></figure>
       </div>
     </div>
   </section>
@@ -674,18 +739,18 @@
 
   // position d'un point du ruban (s de 0 à 1) au temps t, déroulé p
   function pathAt(s, t, p, out) {
-    const q = smooth(0, 1, p * 1.3 - (1 - s) * 0.3);  // déroulé régulier, sans pli brusque
-    const th = s * Math.PI * 2 * 1.2 + t * 0.06;
+    const q = smooth(0, 1, p * 1.45 - (1 - s) * 0.45); // déroulé fluide
+    const th = s * Math.PI * 2 * 1.55 + t * 0.05;
     const R = 2.5;
     const cx = Math.cos(th) * R * 1.45;
-    const cy = (s - 0.5) * 1.8 + Math.sin(th * 0.5 + t * 0.3) * 0.45 - 2.5;
+    const cy = (s - 0.5) * 2.3 + Math.sin(th * 0.5 + t * 0.25) * 0.5 - 2.3;
     const cz = Math.sin(th) * R - 1.2;
     const sx = (s - 0.5) * L, sy = -1.4 + (s - 0.5) * -0.6, sz = 0;
     const f = 1 - q * 0.85;
     out.set(
       cx + (sx - cx) * q,
-      cy + (sy - cy) * q + Math.sin(t * 0.6 + s * 5) * 0.08 * f,
-      cz + (sz - cz) * q + Math.cos(t * 0.45 + s * 4) * 0.09 * f
+      cy + (sy - cy) * q + Math.sin(t * 0.55 + s * 6) * 0.11 * f,
+      cz + (sz - cz) * q + Math.cos(t * 0.45 + s * 5) * 0.12 * f
     );
     return q;
   }
@@ -706,7 +771,7 @@
       if (Nrm.lengthSq() < 1e-4) Nrm.set(0, 0, 1);
       Nrm.normalize();
       // torsion autour de la tangente (formule de Rodrigues, Nrm ⟂ T)
-      const phi = (1 - q) * (s * Math.PI * 2 * 0.3 + Math.sin(t * 0.35 + s * 2) * 0.25); // torsion douce, sans rotation continue
+      const phi = (1 - q) * (s * Math.PI * 2 * 0.8 + Math.sin(t * 0.3 + s * 2) * 0.3); // torsion visible mais douce, sans rotation continue
       K.crossVectors(T, Nrm);
       Nrm.multiplyScalar(Math.cos(phi)).addScaledVector(K, Math.sin(phi));
       const o = i * 6, hw = W / 2;
@@ -737,6 +802,25 @@
     pointer.y = e.clientY / window.innerHeight - 0.5;
   }, { passive: true });
 
+  // Faire tourner le mètre au doigt ou à la souris (avec inertie, retour doux de face)
+  const drag = { on: false, x: 0, y: 0, spin: 0, tilt: 0, vel: 0 };
+  const hint = document.getElementById('dragHint');
+  canvas.addEventListener('pointerdown', (e) => {
+    drag.on = true; drag.x = e.clientX; drag.y = e.clientY; drag.vel = 0;
+    canvas.setPointerCapture(e.pointerId); canvas.classList.add('grabbing');
+    if (hint) hint.classList.add('gone');
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!drag.on) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    drag.x = e.clientX; drag.y = e.clientY;
+    drag.vel = dx * 0.009; drag.spin += drag.vel;
+    drag.tilt = Math.max(-0.5, Math.min(0.5, drag.tilt + dy * 0.004));
+  });
+  const release = () => { drag.on = false; canvas.classList.remove('grabbing'); };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
   // Ne rendre que si le hero est visible
   let visible = true;
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
@@ -748,8 +832,17 @@
     const t = reduce ? 0 : clock.getElapsedTime();
     const shownP = window.heroState ? window.heroState.p : 0; // déjà lissé par le scrub GSAP
     updateTape(t, shownP);
-    group.rotation.y += ((reduce ? 0 : pointer.x * 0.14) * (1 - shownP * 0.7) - group.rotation.y) * 0.035;
-    group.rotation.x += (0.22 * (1 - shownP) + (reduce ? 0 : pointer.y * 0.08) * (1 - shownP * 0.7) - group.rotation.x) * 0.035;
+    if (!drag.on) {                       // inertie puis retour doux vers la face
+      drag.spin += drag.vel; drag.vel *= 0.93;
+      if (Math.abs(drag.vel) < 0.002) drag.spin += (Math.round(drag.spin / (Math.PI * 2)) * Math.PI * 2 - drag.spin) * 0.03;
+      drag.tilt *= 0.95;
+    }
+    const free = 1 - shownP;              // une fois déroulé, le mètre reste à plat
+    const ty = drag.spin * free + (reduce ? 0 : pointer.x * 0.14) * (1 - shownP * 0.7);
+    const tx = 0.18 * free + drag.tilt * free + (reduce ? 0 : pointer.y * 0.08) * (1 - shownP * 0.7);
+    group.rotation.y += (ty - group.rotation.y) * (drag.on ? 0.35 : 0.08);
+    group.rotation.x += (tx - group.rotation.x) * 0.08;
+    if (hint && shownP > 0.05) hint.classList.add('gone');
     group.rotation.z = -0.05 * shownP;
     renderer.render(scene, camera);
     if (!canvas.classList.contains('ready')) canvas.classList.add('ready');
